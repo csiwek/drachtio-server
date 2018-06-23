@@ -144,6 +144,8 @@ namespace drachtio {
 
 		nta_leg_t* getNtaLeg(void) { return m_leg; }
 
+		bool isNattedClient(void) { return m_bIsNattedClient; }
+
 		void setTimerD(TimerEventHandle& handle) { m_timerD = handle; }
 		TimerEventHandle getTimerD(void) { return m_timerD; }
 		void clearTimerD() { m_timerD = NULL;}
@@ -199,6 +201,8 @@ namespace drachtio {
 		nta_leg_t* 	m_leg; 
 		tport_t* 	m_tp ;
 		nta_outgoing_t*  m_ackOrq;
+
+		bool 			m_bIsNattedClient;
 
 		// sip timers
     TimerEventHandle  m_timerD ;

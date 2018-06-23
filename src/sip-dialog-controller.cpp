@@ -148,8 +148,8 @@ namespace drachtio {
             }
 
             string routeUrl ;
-            if (dlg->getRole() == SipDialog::we_are_uas) {
-                // removed this...the sofia uas leg has already had the record-route/contact dealt with to determine route
+            if (dlg->getRole() == SipDialog::we_are_uas && dlg->isNattedClient()) {
+                // originally removed this...the sofia uas leg has already had the record-route/contact dealt with to determine route
                 //
                 // hmmm: I think this what was previously making nat'ed clients work...
                 // however, we need to distinguish two scenarios:
@@ -162,13 +162,11 @@ namespace drachtio {
                 // So somehow we need when creating a Dialog to determine whether the client is nat'ed
                 // and whether it is the endpoint we are going to send back to...
     
-                
                 string sourceAddress = dlg->getSourceAddress() ;
                 unsigned int sourcePort = dlg->getSourcePort() ;
                 routeUrl = string("sip:") + sourceAddress + ":" + boost::lexical_cast<std::string>(sourcePort) + 
                     ";transport=" + dlg->getProtocol() ;
-                DR_LOG(log_debug) << "SipDialogController::doSendRequestInsideDialog - sending request to " << routeUrl ;  
-                           
+                DR_LOG(log_info) << "SipDialogController::doSendRequestInsideDialog - sending request to nat'ed client at: " << routeUrl ;           
             }
             string transport ;
             dlg->getTransportDesc(transport) ;

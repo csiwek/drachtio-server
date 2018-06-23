@@ -78,6 +78,28 @@ namespace drachtio {
 			if( !hvalue.empty() ) this->setRemoteContentType( hvalue ) ;			
 		}
 
+	  /*
+		sip_route_t const *return_route;
+		sip_contact_t const *return_target;
+		nta_leg_get_route(leg, &return_route, &return_target);
+		if (return_route) {
+		  DR_LOG(log_debug) << "SipDialog::SipDialog first route: " << return_route->r_url->url_host;
+		}
+		if (return_target) {
+		  DR_LOG(log_debug) << "SipDialog::SipDialog contact: " << return_target->m_url->url_host;
+		}
+		DR_LOG(log_debug) << "SipDialog::SipDialog via: " << sip->sip_via->v_host;
+		*/
+		const char * received = msg_header_find_param(sip->sip_via->v_common, "received");
+		const char * rport = msg_header_find_param(sip->sip_via->v_common, "rport");
+		if (received || rport) {
+			m_bIsNattedClient = true;
+			if (received) this->setSourceAddress(received);
+			if (rport) this->setSourcePort(::atoi(rport));
+		}
+
+		DR_LOG(log_debug)	<< 	"SipDialog::SipDialog - received: " << received << ", rport: " << rport; 
+
     DR_LOG(log_debug) << "SipDialog::SipDialog - creating dialog for inbound INVITE sent from " << m_protocol << "/" << m_transportAddress << ":" << m_transportPort ;
 
 	}
