@@ -96,11 +96,11 @@ namespace drachtio {
 			m_bIsNattedClient = true;
 			if (received) this->setSourceAddress(received);
 			if (rport) this->setSourcePort(::atoi(rport));
+			DR_LOG(log_debug)	<< 	"SipDialog::SipDialog - received: " << received << ", rport: " << rport; 
 		}
 
-		DR_LOG(log_debug)	<< 	"SipDialog::SipDialog - received: " << received << ", rport: " << rport; 
 
-    DR_LOG(log_debug) << "SipDialog::SipDialog - creating dialog for inbound INVITE sent from " << m_protocol << "/" << m_transportAddress << ":" << m_transportPort ;
+    DR_LOG(log_debug) << "SipDialog::SipDialog - creating dialog for inbound INVITE or SUBSCRIBE sent from " << m_protocol << "/" << m_transportAddress << ":" << m_transportPort ;
 
 	}
 
