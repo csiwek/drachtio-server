@@ -327,10 +327,20 @@ namespace drachtio {
     m_masterTransport = boost::make_shared<SipTransport>( config ) ;
     m_masterTransport->setTport(tp) ;
 
+    usize_t mtu;
+    int rv = tport_get_params(tp, TPTAG_MTU_REF(mtu), TAG_END());
+
+    DR_LOG(log_debug) << "SipTransport::addTransports - mtu size for master : " << dec << mtu << " rv: " << rv ;
+
+
     while (NULL != (tp = tport_next(tp) )) {
       const tp_name_t* tpn = tport_name(tp) ;
       string desc ;
       getTransportDescription( tp, desc ); 
+
+      int rv = tport_get_params(tp, TPTAG_MTU_REF(mtu), TAG_END());
+
+      DR_LOG(log_debug) << "SipTransport::addTransports - mtu size: " << dec << mtu << " transport: " << desc ;
 
       mapTport2SipTransport::const_iterator it = m_mapTport2SipTransport.find(tp) ;
       if (it == m_mapTport2SipTransport.end()) {
@@ -340,6 +350,12 @@ namespace drachtio {
         p->setTport(tp); 
         p->setTportName(tpn) ;
         m_mapTport2SipTransport.insert(mapTport2SipTransport::value_type(tp, p)) ;
+
+        if (0 == strcmp(p->getProtocol(), "udp") && mtu < 4096) {
+          tport_set_params(tp, TPTAG_MTU(4096), TAG_END());   
+          tport_get_params(tp, TPTAG_MTU_REF(mtu), TAG_END());
+          DR_LOG(log_info) << "SipTransport::addTransports - reset mtu size to: " << dec << mtu << " transport: " << desc ;
+        }
 
         if (p->getLocalNet().empty()) {
           string network, bits;
